@@ -1,0 +1,8 @@
+.env*
+!.env.example
+/tests/
+/test-results/
+/playwright-report/
+/supabase/
+/wedding-invitation.jpeg
+*.tsbuildinfo

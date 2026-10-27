@@ -1,6 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { siteUrl } from "@/lib/site";
+import localFont from "next/font/local";
 import "./globals.css";
+
+const scriptFont = localFont({ src: "../../public/images/great-vibes-latin.woff2", variable: "--font-script", display: "swap" });
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -20,5 +23,5 @@ export const metadata: Metadata = {
 export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#f8f6f0" };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en"><body>{children}</body></html>;
+  return <html lang="en" className={scriptFont.variable}><body>{children}</body></html>;
 }

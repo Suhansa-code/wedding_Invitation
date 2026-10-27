@@ -1,8 +1,19 @@
 # Dulmi & Isuru Wedding Invitation
 
-A Next.js App Router application with a responsive envelope reveal, personalized guest-name overlay, and a Supabase-backed administrator studio. React client components handle the reveal and forms; server components and server actions handle invitation lookup, authentication, and administration. Supabase provides Auth and PostgreSQL with row-level security (RLS).
+A Next.js App Router application with an animated welcome and envelope experience, a personalized HTML/SVG wedding invitation, and a Supabase-backed administrator studio. React client components handle the scenes, invitation, and forms; server components and server actions handle invitation lookup, authentication, and administration. Supabase provides Auth and PostgreSQL with row-level security (RLS).
 
-The approved artwork is present at `public/images/wedding-invitation.png`, with the guest-name band calibrated to its 1056 x 1490 dimensions. The original design is rendered unchanged. **Before launch:** configure a live Supabase project, apply both migrations, and verify the deployed invitation on actual guest devices. Automated backend and browser tests are included; they do not replace live Supabase verification.
+The original artwork remains at `public/images/wedding-invitation.png` as a design reference and unpersonalized fallback, not the rendered full-card image. `WeddingInvitation` recreates the invitation with HTML text, an SVG mandala, the real couple crop, and a local script font. `InvitationExperience` coordinates `WelcomeScene`, `EnvelopeScene`, and the final invitation. **Before launch:** configure a live Supabase project, apply both migrations, and verify the deployed invitation on actual guest devices. Automated backend and browser tests are included; they do not replace live Supabase verification.
+
+## Current Deployment
+
+- Website: https://dulmi-isuru-invitation.vercel.app
+- Envelope preview: https://dulmi-isuru-invitation.vercel.app/preview
+- Administrator login: https://dulmi-isuru-invitation.vercel.app/admin/login
+- Vercel project: https://vercel.com/suhansa/dulmi-isuru-invitation
+
+The previous public website was deployed and verified on desktop and mobile Chromium on 27 October 2026; that record does not verify deployment of the new HTML/SVG scene implementation. **Supabase is not configured on this deployment yet:** admin sign-in is disabled, no administrator password has been created, and personalized guest links are not operational. Complete the Supabase setup below, add its three environment values to the Vercel project, and redeploy before distributing personalized invitations. `NEXT_PUBLIC_SITE_URL` is already configured to the production origin.
+
+The initial release was uploaded from a Git-free copy of the current working tree because Vercel rejected the repository commit author's team membership. The source repository and its author details were not modified. Automatic Git deployments are not configured; resolve the author membership or use an owner-authorized source upload for subsequent releases. The account's older `wedding` project was left unchanged.
 
 ## Local Development
 
@@ -19,7 +30,7 @@ Create `.env.local` using the keys in `.env.example`, fill in your project's val
 npm run dev
 ```
 
-Open `http://localhost:3000`. The landing page and generic `/preview` do not require database records; preview still requires the approved artwork to display the card. Admin access and personalized invitations require the Supabase setup below. Restart the development server after changing environment values.
+Open `http://localhost:3000`. The landing page and generic `/preview` do not require database records; the HTML/SVG invitation does not depend on loading the full original PNG. Admin access and personalized invitations require the Supabase setup below. Restart the development server after changing environment values.
 
 | Variable | Configuration |
 | --- | --- |
@@ -37,26 +48,22 @@ npm start
 
 Generated links will point to that configured origin, not automatically to the local server. Public environment variables are embedded at build time; rebuild/redeploy after changing them. Keep `.env.local` and actual secrets out of source control, screenshots, logs, and documentation. `.env.example` contains configuration placeholders only.
 
-## Approved Artwork
+## Invitation And Artwork
 
-The approved invitation is at **`public/images/wedding-invitation.png`**. Keep this asset in place. Do not generate a replacement, recreate the printed design in HTML, repaint decorations, crop, stretch, or alter its typography or layout. If a future approved source uses a different format, obtain approval for its exact exported asset rather than merely renaming its extension.
+The current requirement is an HTML/SVG invitation, not a static full-image card with a guest-name overlay. Keep **`public/images/wedding-invitation.png`** unchanged as the original design reference and the unpersonalized artwork linked by the JavaScript-disabled fallback. It is not required for the interactive invitation to render. No generated test fixture belongs at the production artwork path.
 
-The application renders the artwork as an unmodified image and overlays only the guest-name area. Missing, failed, or stalled artwork produces a preparation/unavailable notice rather than an invented card.
+`src/components/wedding/WeddingInvitation.tsx` composes semantic headings and invitation text with `PersonalizedGuest`, `WeddingCouple`, `WeddingDate`, `WeddingVenue`, and `WeddingRSVP`. Names are real text in a centered, wrapping guest line, not positioned over printed pixels. Card layout and responsive typography live in `src/components/wedding/card.css`.
 
-Calibrate these variables in `src/app/globals.css` **against the actual approved asset**, not a fixture or assumed dimensions:
-
-| Variable | Meaning |
+| Asset | Purpose |
 | --- | --- |
-| `--guest-x`, `--guest-y` | Center of the guest-name overlay as percentages of the card. |
-| `--guest-width`, `--guest-height` | Overlay area as percentages of the card; cover only the intended printed name line. |
-| `--guest-paper` | Background color matching the paper behind that line. |
-| `--card-ratio` | Initial width / height ratio, currently `1056 / 1490` for the supplied artwork. |
+| `public/images/wedding-couple.webp` | Real couple crop, served as `/images/wedding-couple.webp` at its 246 x 374 aspect ratio. |
+| `src/lib/mandala-artwork.json` | SVG view box and path data rendered by `AnimatedMandala`; not a full-card background image. |
+| `public/images/great-vibes-latin.woff2` | Local script font used for invitation typography. |
+| `public/images/wedding-invitation.png` | Original 1056 x 1490 reference and unpersonalized fallback. |
 
-`wedding-invitation.tsx` reads `naturalWidth` and `naturalHeight` on image load, sets the card's ratio, and attempts image decoding **before signaling readiness for the animation**. The image uses `object-fit: contain`, preserving its proportions without distortion; the initial CSS ratio is only a loading fallback. Overlay placement still needs human calibration. Check short, long, family, and international names at mobile and desktop sizes, both during the reveal and when fully open, without covering other artwork.
+`InvitationExperience` runs the **welcome -> envelope -> invitation** journey. `WelcomeScene` presents the couple, date, guest greeting, and **Open My Invitation**. `EnvelopeScene` animates separate paper, seal, flap, and letter layers, with an intermediate opening state before displaying the final invitation. The letter contains the same HTML/SVG `WeddingInvitation`, not the original PNG. `experience.css` controls scene layout, and `src/components/animation/motionVariants.ts` contains shared motion variants.
 
-Optimize the source **losslessly** if needed, preserving decoded pixels, dimensions, colors, transparency, and the approved design. Do not use lossy recompression, resizing, cropping, or a design-changing conversion as a performance shortcut. No generated test fixture belongs at the production artwork path.
-
-To update the invitation later, replace the approved file at the same path, re-align these CSS variables, verify the actual artwork across sizes, and redeploy. **No database change or token regeneration is needed** for an image-only update. Existing guest records and links remain valid. Check that the deployed browser/CDN is serving the new asset.
+`src/lib/wedding-config.ts` holds the couple, date, venue, directions, and contact details. Update the components, configuration, or supplied assets as appropriate, verify the design across viewport sizes, and redeploy. Replacing the reference PNG alone does not update the HTML invitation. Presentation-only changes need **no database change or token regeneration**; existing guest records and links remain valid. Check short, long, family, and international names, image proportions, the SVG mandala, font loading, and the envelope-to-card transition on desktop and mobile.
 
 ## Supabase Setup
 
@@ -87,14 +94,14 @@ Even an administrator cannot manage memberships from the app. MFA is optional fu
 | Route | Behavior |
 | --- | --- |
 | `/` | Public welcome page with links to the generic preview and `/admin` guest management (redirects to login when unauthorized). |
-| `/preview` | Public, non-personalized reveal using `Dear family & friends`; no guest lookup or guest-name query parameter. Marked noindex. |
-| `/invite/[token]` | Public bearer-link lookup for one active invitation, then the envelope and personalized card. Invalid, unknown, regenerated, and inactive tokens produce the unavailable/not-found page. Service failures use the generic retry error boundary. |
+| `/preview` | Public, generic welcome -> envelope -> invitation journey greeting `Dear family & friends`; no guest lookup or guest-name query parameter. Marked noindex. |
+| `/invite/[token]` | Public bearer-link lookup for one active invitation, then the welcome -> envelope -> personalized HTML/SVG invitation journey. Invalid, unknown, regenerated, and inactive tokens produce the unavailable/not-found page. Service failures use the generic retry error boundary. |
 | `/admin/login` | Email/password sign-in, followed by verified-user and allowlist checks. A valid non-admin account is not granted access. |
 | `/admin` | Protected dashboard with all/active/inactive totals and an invitation-creation form. |
 | `/admin/guests` | Protected guest list, creation form, display-name search (`q`), and pagination (`page`), 25 records per page including inactive invitations. Row controls edit details, copy/open/preview links, regenerate, deactivate, and reactivate. |
 | `/robots.txt` | Crawler rules disallow `/invite/`, `/admin`, and `/preview`. |
 | `/opengraph-image` | Generic social image, not personalized invitation artwork or guest data. |
-| `/images/wedding-invitation.png` | Static approved artwork once supplied; it is publicly accessible and not a private guest record. |
+| `/images/wedding-invitation.png` | Original reference/fallback artwork; publicly accessible and not a private guest record. |
 
 Creation is available on both admin pages. Enter an internal guest name, an optional title preset (`Mr.`, `Mrs.`, `Ms.`, `Dr.`, `Mr. & Mrs.`, or `Family`), and the exact display name to appear on the invitation. The display name initially follows title plus guest name but can be customized independently or reset with **Use title and guest name**. Names are trimmed, single-line text of at most 160 characters; control characters, line separators, and bidirectional override/isolate controls are rejected.
 
@@ -103,12 +110,12 @@ Choose an automatic random token (recommended) or a custom token. Custom tokens 
 Successful creation immediately shows the guest's display name and canonical URL with **Copy link**, **Open**, and **Preview**, independently of the list's current search or page. Clipboard failure leaves the visible URL available for manual copying. In the guest list, expand **Edit guest details** and save to update names/title without changing the link. There is no delete operation.
 
 - **Open** opens the canonical personalized URL in a new tab.
-- **Preview** opens that same URL with `?preview=1`, skips straight to the decoded card, and does not change the session's already-opened state. It does not bypass active-token validation or grant access to inactive invitations. **Replay envelope** still works in preview. Use `/preview` for the generic, database-independent demonstration.
+- **Preview** opens that same URL with `?preview=1`, skips straight to the HTML/SVG invitation, and does not change the session's already-opened state. It does not bypass active-token validation or grant access to inactive invitations. **Replay Envelope** still works in preview. Use `/preview` for the generic, database-independent demonstration starting at the welcome scene.
 - **Regenerate link** asks for confirmation, replaces the token with a fresh random token, and invalidates the old URL on subsequent requests. The private token registry permanently reserves all issued tokens so an old URL cannot later be assigned to another guest. Copy and share the new link. Regeneration does not reactivate an inactive invitation. Tokens retired before the second migration cannot be recovered from existing rows.
 - **Deactivate** asks for confirmation and makes the existing URL unavailable on subsequent requests. **Reactivate** restores the current token's availability. Neither can erase content already viewed or saved by a guest.
 - **Sign out** ends the local Auth session and returns to login, even after admin membership is revoked. The access-denied login screen also offers this control.
 
-The reveal waits for the image before starting, supports **Skip animation**, reduced-motion preferences, a session-scoped already-opened state, **Replay envelope**, and **Get directions**. JavaScript is required for the reveal and personalized overlay; the noscript fallback links to the unpersonalized source artwork only.
+The experience preloads the couple crop and supports **Skip Animation** from welcome or envelope, reduced-motion preferences, a session-scoped already-opened state, **Replay Envelope**, **Get Directions**, and contact links. Reduced motion and previously opened invitations bypass the introductory scenes. Actions below the card reveal as they enter the viewport. JavaScript is required for the interactive experience and personalized invitation; the noscript fallback links to the unpersonalized original artwork only. Rendering does not wait for the full original PNG to load or decode.
 
 ## Security And Operations
 
@@ -124,7 +131,7 @@ The reveal waits for the image before starting, supports **Skip animation**, red
 
 1. Put the project in a private source repository without `.env.local`, real keys, or guest data, then import/link it in Vercel as a Next.js project. Select **Node.js 22.x** in project settings; keep `npm ci` as the install command and `npm run build` as the build command.
 2. Apply both Supabase migrations to the exact production project and create/allowlist the production Auth administrator as described above. Vercel does not run database migrations for this application. Disable signup and configure Auth settings and abuse protections before launch.
-3. Include the supplied approved PNG and calibrated CSS in the deployment. A successful build alone does not prove that deployed artwork is correctly aligned.
+3. Include the original reference/fallback PNG, real couple WebP crop, local font, SVG mandala data, and component CSS in the deployment. A successful build alone does not prove that the deployed HTML/SVG invitation and scene transitions render correctly.
 4. Configure all four `.env.example` variables in Vercel's **Production** environment, including the canonical HTTPS custom domain and the matching Supabase project's URL, publishable key, and server-only secret. Use separate test data/projects for Preview deployments; set their environment deliberately rather than exposing production guests. A preview build also runs in production mode and requires HTTPS configuration.
 5. Attach the canonical domain, deploy, and verify generated links, metadata, cookie behavior, headers, and redirects on that domain. Do not derive the canonical URL from an incoming Host header or silently use a temporary deployment URL. Configure host/edge rate limiting and ensure external caches do not override private/no-store responses.
 6. Complete the live checklist on the deployed site before distributing links. Redeploy whenever build-time public environment values or artwork/CSS change.
@@ -151,13 +158,13 @@ psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/tests/invitations_rls.sql
 
 `DATABASE_URL` is a test-tool connection string, not an application environment variable. This assertion-based SQL script requires no pgTAP and rolls back its fixtures. It covers anonymous and non-admin denial, administrator operations, membership write denial and revocation, active/inactive lookup, and input constraints. It does not replace verification of the deployed app.
 
-Browser E2E tooling is Playwright (`npm run test:e2e`). Install both target engines with:
+Browser E2E tooling is Playwright (`npm run test:e2e`). Install the target engines with:
 
 ```bash
-npx playwright install chromium webkit
+npx playwright install chromium firefox webkit
 ```
 
-On Linux, install Playwright's system dependencies using `npx playwright install-deps` when required (administrator privileges may be needed). `playwright.config.ts` runs desktop Chromium, mobile Chromium, and mobile WebKit against a local Next.js server and an isolated mock Supabase process on ports 3100 and 54329. It overrides the app's Supabase settings only for the test process and never writes guest data to a real project. Run:
+On Linux, install Playwright's system dependencies using `npx playwright install-deps` when required (administrator privileges may be needed). `playwright.config.ts` runs desktop Chromium, desktop Firefox, mobile Chromium, and mobile WebKit against a local Next.js server and an isolated mock Supabase process on ports 3100 and 54329. It overrides the app's Supabase settings only for the test process and never writes guest data to a real project. Run:
 
 ```bash
 npm run test:e2e
@@ -165,13 +172,13 @@ npm run test:e2e
 
 To run only the Chromium projects: `npm run test:e2e -- --project=desktop-chromium --project=mobile-chromium`.
 
-`tests/e2e/invitation.spec.ts` covers the timed reveal, skip/replay, session persistence, reduced motion, centered/contained long names and title formats, distinct guests, no-store/noindex/generic metadata, invalid/revoked links, sanitized database failures, missing artwork, and unauthenticated admin redirects. It also loads the actual approved artwork and verifies its dimensions and printed-band alignment. Most other cases intercept a blank proportioned SVG **only in browser tests**, never written into `public/`; it is not approved artwork. `tests/e2e/admin.spec.ts` exercises login denial and allowlisting, SSR cookies, automatic/custom creation, duplicate rejection, clipboard fallback, search, token-preserving edits, lifecycle confirmations, regenerated links, preview, and sign-out. The mock service is a separate test process, not an application demo mode, public API, or production database. These tests do not verify live Supabase authentication.
+`tests/e2e/invitation.spec.ts` covers welcome -> envelope -> invitation, layered flap/letter animation, keyboard skip/replay and focus, session persistence, reduced motion, preview isolation, centered/wrapping long names and title formats, distinct guests, no-store/noindex/generic metadata, invalid/revoked links, sanitized database failures, and unauthenticated admin redirects. It checks the real couple crop and SVG mandala while the full original PNG is unavailable, and captures scene screenshots. `tests/e2e/admin.spec.ts` exercises login denial and allowlisting, SSR cookies, automatic/custom creation, duplicate rejection, clipboard fallback, search, token-preserving edits, lifecycle confirmations, regenerated links, Open starting at welcome, preview opening the invitation directly, and sign-out. The mock service is a separate test process, not an application demo mode, public API, or production database. These describe test coverage, not a claim that the current suite has passed; they do not verify live Supabase authentication or visual fidelity.
 
 ### Live Manual Checklist
 
 These **14 journeys are a verification plan, not a record of executed live tests**. Use a disposable migrated Supabase project with actual credentials and the actual approved artwork, then repeat the relevant launch checks on production. Record browser/device, expected versus actual results, and date without publishing tokens or guest data.
 
-1. **Bootstrap and artwork:** configure the project and canonical HTTPS origin, build/deploy, open `/` and `/preview` on desktop and mobile, and verify the exact approved asset, natural proportions, paper match, and overlay alignment. Confirm long/international names do not obscure the design.
+1. **Bootstrap and artwork:** configure the project and canonical HTTPS origin, build/deploy, open `/` and `/preview` on desktop and mobile, and compare the HTML/SVG invitation to the original design reference. Verify the real couple crop's proportions, SVG mandala, local font, responsive layout, and wrapping guest line. Confirm long/international names do not obscure the design.
 2. **Anonymous protection:** in a fresh browser session, visit `/admin` and `/admin/guests` and confirm login redirection. Using only the publishable key, confirm anonymous API reads/writes cannot retrieve invitations or memberships; direct/forged mutation submissions must not write data.
 3. **Login failure and non-admin:** test invalid credentials and a valid Auth user without an allowlist row. Confirm generic denial, no guest data, and no admin access. Verify disabled signup and Supabase Auth rate-limit settings without brute-forcing the service.
 4. **Administrator session:** sign in as the allowlisted admin, confirm dashboard totals and protected navigation, refresh to exercise session cookies, and verify session/refresh failures do not grant access.
@@ -180,13 +187,17 @@ These **14 journeys are a verification plan, not a record of executed live tests
 7. **Search and pagination:** create enough disposable records for more than 25 rows, include inactive rows, search display names, clear the search, and move between pages. Create while viewing a nonmatching search or later page; the new share result must still appear immediately.
 8. **Copy, open, and preview:** exercise all share controls after creation and in the list. Confirm clipboard success and denied-clipboard fallback. Open in a signed-out browser; verify `?preview=1` skips animation without persisting opened state, enforces the same active-token behavior, and `/preview` stays generic.
 9. **Guest editing:** change guest name, title, and display name, save, and reopen the existing URL. Confirm the display updates and token is unchanged; verify invalid edits do not persist.
-10. **Reveal and accessibility:** in Chromium and WebKit, check first-load animation, skip before/after image readiness, reduced motion, repeat visits in the same session, replay, keyboard focus/status, directions, and narrow/landscape layouts. Exercise missing/slow artwork and JavaScript-disabled fallback without substituting production artwork.
+10. **Reveal and accessibility:** in Chromium and WebKit, check welcome, **Open My Invitation**, the layered envelope opening, final invitation, **Skip Animation** from welcome and envelope, reduced motion, repeat visits in the same session, **Replay Envelope**, keyboard focus/status, **Get Directions**, contact links, and narrow/landscape layouts. Scroll through the complete card and its actions. Exercise missing/slow couple-image or font loads, confirm a missing original PNG does not block the HTML/SVG card, and check the JavaScript-disabled original-artwork fallback without substituting production assets.
 11. **Deactivation and reactivation:** cancel and confirm deactivation, then request the URL in a fresh session and confirm it is unavailable. Reactivate and confirm the same current URL works and dashboard/list status updates.
 12. **Regeneration:** cancel and confirm regeneration, verify the old URL becomes unavailable and the new canonical URL works, then repeat on an inactive record. It must remain inactive until explicitly reactivated. Share only the final intended link.
 13. **Revocation and sign-out:** remove an admin's allowlist row through trusted SQL while they are signed in. Confirm subsequent protected reads and writes are denied, including forged action attempts. Verify they can still sign out from the access-denied login screen. Restore only if intended, then test sign-out and back/refresh behavior. Verify non-admin/admin sessions cannot write memberships or delete invitations through the API.
 14. **Failure and privacy controls:** in the disposable environment, exercise unknown/malformed tokens, missing configuration, and database/network outages; confirm generic not-found/retry states with no sensitive errors. Inspect deployed no-store/noindex/referrer headers, robots rules, generic social metadata, server-only secret handling, log redaction, and host rate limits for login and `/invite/*`. Restore configuration and confirm recovery.
 
-Implementation verification: 78 backend/configuration tests, 30 desktop/mobile Chromium browser tests, lint, TypeScript checks, and a configured Node 22 production build passed. Both migrations and expanded RLS/token-reservation assertions were also exercised in disposable PostgreSQL 17 with Supabase role/auth stand-ins, not the hosted project. WebKit cannot launch on this host because `libgstcodecparsers-1.0.so.0` is missing; install Playwright's WebKit system dependencies and test a real iPhone before launch. Live Supabase authentication, deployed policies, and domain-level launch checks remain unverified without real project credentials.
+Current scene verification on 27 October 2026: **78 backend/configuration tests and 72 browser tests passed**, together with lint, TypeScript checks, and a Node 22 production build using the configured HTTPS deployment origin. Browser projects covered desktop Chromium, desktop Firefox, Pixel 7-sized Chromium, and iPhone 13-sized WebKit. Coverage includes the real opening sequence, cancellation/replay, hydration errors, distinct personalized guests, 320px and landscape layouts, printed content/date arrangement, and the complete mocked admin journey. Screenshots were also inspected against the original design reference; this is not a pixel-identical reproduction of printed typography.
+
+This Linux host needed a temporary external WebKit launcher with a locally extracted codec-parser library and system GIO modules rather than inherited VS Code Snap modules. No host-specific paths or workarounds are embedded in the app or checked-in browser configuration. On other Linux hosts, install the standard Playwright system dependencies above. Physical Android/iPhone devices and WhatsApp in-app browsers still require manual testing before launch.
+
+Historical database verification exercised both migrations and expanded RLS/token-reservation assertions in disposable PostgreSQL 17 with Supabase role/auth stand-ins, not the hosted project. Live Supabase authentication, deployed policies, and domain-level launch checks remain unverified without real project credentials.
 
 ## File Map
 
@@ -196,14 +207,17 @@ Implementation verification: 78 backend/configuration tests, 30 desktop/mobile C
 | `src/app/admin/actions.ts` | Validated authentication and invitation mutation server actions. |
 | `src/app/admin/(protected)/` | Authorized dashboard and paginated/searchable guest list. |
 | `src/app/invite/[token]/` | Dynamic public token page and unavailable/loading states. |
-| `src/components/invitation-reveal.tsx` | Reveal lifecycle, reduced motion, skip/replay, session state, artwork failure UI. |
-| `src/components/wedding-invitation.tsx`, `guest-name-overlay.tsx`, `envelope-animation.tsx` | Original image/natural-dimension handling, personalized overlay, and layered envelope. |
+| `src/components/wedding/InvitationExperience.tsx` | Scene lifecycle, reduced motion, skip/replay, session state, focus/status, and original-artwork noscript fallback. |
+| `src/components/wedding/WelcomeScene.tsx`, `EnvelopeScene.tsx`, `EnvelopeFlap.tsx` | Personalized welcome and layered envelope/letter opening. |
+| `src/components/wedding/WeddingInvitation.tsx`, `PersonalizedGuest.tsx`, `WeddingCouple.tsx`, `WeddingDate.tsx`, `WeddingVenue.tsx`, `WeddingRSVP.tsx` | HTML/SVG card, wrapping guest-name line, couple crop, and invitation details. |
+| `src/components/wedding/AnimatedMandala.tsx`, `WeddingActions.tsx`, `card.css`, `experience.css` | SVG decoration, directions/contact/replay actions, responsive card and scene styling. |
+| `src/components/animation/motionVariants.ts`, `src/lib/wedding-config.ts`, `src/lib/mandala-artwork.json` | Shared motion variants, wedding details, and SVG mandala data. |
 | `src/components/admin/` | Guest forms, link sharing, operations, login, and sign-out UI. |
 | `src/lib/auth.ts`, `src/lib/admin-data.ts`, `src/lib/supabase/` | Verified admin checks, authenticated queries, and server-side Supabase clients/configuration. |
 | `src/lib/invitations.ts` | Server-only exact-active-token public resolver. |
 | `src/lib/validation.ts`, `tokens.ts`, `site.ts` | Shared schemas, cryptographic token generation, canonical-origin validation and URL creation. |
 | `src/proxy.ts`, `next.config.ts` | Admin session refresh, cache/privacy and security headers. |
-| `public/images/` | Supplied approved PNG, rendered without design changes. |
+| `public/images/` | Original reference/fallback PNG, real couple WebP crop, and local script font. |
 | `supabase/migrations/`, `supabase/SETUP.md`, `supabase/tests/` | Database schema/RLS, operator setup, and rollback-based SQL checks. |
 | `tests/backend.test.ts`, `tests/config.test.ts` | Mocked backend and transport-configuration unit tests. |
 | `playwright.config.ts`, `tests/e2e/`, `tests/mock-supabase.mjs` | Browser projects, fixture-backed UI coverage, and isolated test lookup service. |

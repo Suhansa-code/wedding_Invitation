@@ -1,0 +1,372 @@
+.wedding-invitation {
+  --wedding-gold: #ad722e;
+  --wedding-inset: clamp(14px, 4vw, 38px);
+  box-sizing: border-box;
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  max-width: 680px;
+  min-width: 0;
+  margin-inline: auto;
+  padding: 0 var(--wedding-inset) clamp(22px, 4vw, 32px);
+  background: #fff;
+  color: #111;
+  font-family: "Times New Roman", Times, serif;
+  text-align: center;
+  box-shadow: 0 12px 48px #49381312;
+}
+
+.wedding-invitation *,
+.wedding-actions * {
+  box-sizing: border-box;
+}
+
+.wedding-mandala-clip {
+  width: calc(100% + var(--wedding-inset) * 2);
+  aspect-ratio: 1056 / 250;
+  margin-inline: calc(-1 * var(--wedding-inset));
+  overflow: hidden;
+  color: var(--wedding-gold);
+  pointer-events: none;
+}
+
+.wedding-mandala-clip > * {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.wedding-invitation .wedding-title {
+  position: relative;
+  margin: -0.13em -0.07em 0.13em;
+  font-family: var(--font-script, "Brush Script MT"), cursive;
+  font-size: clamp(44px, 12.6vw, 90px);
+  font-weight: 400;
+  line-height: 1.25;
+  letter-spacing: -0.035em;
+}
+
+.wedding-invitation .wedding-introduction {
+  margin: 0;
+  font-size: clamp(20px, 4.1vw, 29px);
+  line-height: 1.2;
+}
+
+.wedding-couple {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 164px) minmax(0, 1fr);
+  align-items: center;
+  gap: 9px;
+  margin: 0 -12px 8px;
+}
+
+.wedding-person {
+  min-width: 0;
+}
+
+.wedding-invitation .wedding-person-name {
+  margin: 0 0 4px;
+  font-family: "Times New Roman", Times, serif;
+  font-size: clamp(32px, 6.8vw, 49px);
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.wedding-invitation .wedding-family {
+  margin: 0;
+  font-size: clamp(14px, 2.9vw, 22px);
+  line-height: 1.3;
+  text-wrap: balance;
+}
+
+.wedding-invitation .wedding-couple-image {
+  display: block;
+  width: 100%;
+  max-width: 164px;
+  height: auto;
+  aspect-ratio: 246 / 374;
+  object-fit: contain;
+  justify-self: center;
+}
+
+.wedding-personalization {
+  margin: 6px 0 16px;
+}
+
+.wedding-invitation .wedding-request {
+  margin: 0;
+  font-size: clamp(15px, 3.1vw, 23px);
+  line-height: 1.35;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+.wedding-guest-line {
+  display: flex;
+  align-items: center;
+  gap: clamp(6px, 1.5vw, 12px);
+  width: 94%;
+  min-height: 38px;
+  margin: 5px auto 7px;
+}
+
+.wedding-invitation .guest-name {
+  flex: 0 1 auto;
+  min-width: 0;
+  width: auto;
+  max-width: calc(100% - 44px);
+  max-height: none;
+  padding: 3px 0;
+  background: transparent;
+  font-family: "Times New Roman", Times, serif;
+  font-size: clamp(18px, 3.5vw, 25px);
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+  text-wrap: balance;
+}
+
+.wedding-guest-dots {
+  flex: 1 0 16px;
+  min-width: 16px;
+  height: 2px;
+  background: radial-gradient(circle, currentColor 1px, transparent 1.2px) left center / 7px 2px repeat-x;
+}
+
+.wedding-date {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr) minmax(0, 1fr);
+  align-items: center;
+  width: min(100%, 490px);
+  margin: 0 auto;
+}
+
+.wedding-month,
+.wedding-year {
+  padding: 8px;
+  font-size: clamp(15px, 3vw, 23px);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.08em;
+}
+
+.wedding-date-center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-inline: 1px solid var(--wedding-gold);
+  padding: 0 8px 2px;
+}
+
+.wedding-weekday {
+  font-size: clamp(14px, 2.7vw, 20px);
+  line-height: 1.25;
+  letter-spacing: 0.12em;
+}
+
+.wedding-day {
+  font-size: clamp(49px, 8.7vw, 64px);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.wedding-invitation .wedding-time {
+  margin: 10px 0 16px;
+  font-size: clamp(17px, 3.1vw, 23px);
+  line-height: 1.3;
+}
+
+.wedding-invitation .wedding-at {
+  margin: 0;
+  font-size: clamp(16px, 2.8vw, 21px);
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.wedding-invitation .wedding-venue-name {
+  margin: 1px 0 3px;
+  font-family: "Times New Roman", Times, serif;
+  font-size: clamp(24px, 4.8vw, 35px);
+  font-weight: 400;
+  line-height: 1.15;
+  text-wrap: balance;
+}
+
+.wedding-address {
+  font-size: clamp(16px, 3vw, 23px);
+  font-style: normal;
+  line-height: 1.35;
+  text-wrap: balance;
+}
+
+.wedding-rsvp {
+  margin: 16px auto 0;
+  width: min(100%, 490px);
+}
+
+.wedding-divider {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: 88%;
+  margin: 0 auto 3px;
+  color: var(--wedding-gold);
+}
+
+.wedding-divider span {
+  flex: 1;
+  height: 1px;
+  background: currentColor;
+}
+
+.wedding-divider svg {
+  flex: none;
+}
+
+.wedding-invitation .wedding-rsvp-title {
+  margin: 0;
+  font-family: "Times New Roman", Times, serif;
+  font-size: 21px;
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: 0.06em;
+}
+
+.wedding-contacts {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  column-gap: 18px;
+}
+
+.wedding-contact + .wedding-contact::before {
+  content: "/";
+  margin-right: 18px;
+}
+
+.wedding-contact {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: inherit;
+  font-size: clamp(16px, 2.9vw, 22px);
+  line-height: 1.3;
+  text-decoration: none;
+  text-underline-offset: 4px;
+}
+
+.wedding-contact:hover {
+  text-decoration: underline;
+  text-decoration-color: var(--wedding-gold);
+}
+
+.wedding-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 680px;
+  margin: 24px auto 0;
+  padding: 0 4px;
+  font-family: "Times New Roman", Times, serif;
+}
+
+.wedding-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-width: 0;
+  min-height: 46px;
+  padding: 11px 18px;
+  border: 1px solid #bda77d;
+  border-radius: 3px;
+  background: #fffdf8;
+  color: #62461f;
+  font: inherit;
+  font-size: 16px;
+  line-height: 1.3;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 180ms, border-color 180ms;
+}
+
+.wedding-action:hover {
+  border-color: #8d642e;
+  background: #f5ecdc;
+}
+
+.wedding-action-primary {
+  background: #775325;
+  border-color: #775325;
+  color: #fff;
+}
+
+.wedding-action-primary:hover {
+  background: #60411c;
+}
+
+.wedding-action-replay {
+  flex-basis: 100%;
+  border-color: transparent;
+  background: transparent;
+}
+
+.wedding-contact:focus-visible,
+.wedding-action:focus-visible {
+  outline: 2px solid #8d642e;
+  outline-offset: 4px;
+}
+
+@media (max-width: 479px) {
+  .wedding-couple {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 26%) minmax(0, 1fr);
+    gap: 4px;
+    margin: 4px -8px 16px;
+  }
+
+  .wedding-invitation .wedding-person-name {
+    font-size: clamp(26px, 7.2vw, 34px);
+  }
+
+  .wedding-invitation .wedding-family {
+    font-size: clamp(14px, 3.4vw, 16px);
+    overflow-wrap: anywhere;
+  }
+
+  .wedding-month,
+  .wedding-year {
+    padding-inline: 3px;
+    letter-spacing: 0.02em;
+  }
+
+  .wedding-weekday {
+    letter-spacing: 0.06em;
+  }
+
+  .wedding-contacts {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .wedding-contact + .wedding-contact::before { content: none; }
+
+  .wedding-action {
+    padding-inline: 14px;
+  }
+
+  .wedding-action-primary {
+    flex-basis: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wedding-invitation *,
+  .wedding-actions,
+  .wedding-actions * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

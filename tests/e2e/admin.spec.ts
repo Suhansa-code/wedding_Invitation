@@ -27,12 +27,6 @@ test("admin denies nonmembers and manages isolated invitations from creation thr
   const customName = `${prefix} Custom 100%_VIP`;
   const editedName = `${prefix} Edited`;
   const customToken = `private-${unique}`;
-  // Keep this journey independent of artwork availability and clipboard permissions.
-  await context.route("**/images/wedding-invitation.png", (route) => route.fulfill({
-    contentType: "image/svg+xml",
-    body: '<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1414"><rect width="1000" height="1414" fill="white"/></svg>',
-  }));
-
   await test.step("reject invalid credentials and authenticated users outside the allowlist", async () => {
     await page.goto("/admin/login");
     await signIn(page, "admin@example.test", "wrong-password");
@@ -138,7 +132,8 @@ test("admin denies nonmembers and manages isolated invitations from creation thr
     await expect(row.getByRole("link", { name: /^Open invitation/ })).toHaveAttribute("href", customUrl);
     await visitor.goto(customUrl);
     await expect(visitor.getByTestId("guest-name")).toHaveText(editedName);
-    await expect(visitor.getByRole("link", { name: "Get directions" })).toBeVisible();
+    await visitor.getByRole("link", { name: "Get Directions", exact: true }).scrollIntoViewIfNeeded();
+    await expect(visitor.getByRole("link", { name: "Get Directions", exact: true })).toBeVisible();
   });
 
   await test.step("cancel and confirm deactivation and reactivation with live link checks", async () => {
@@ -178,7 +173,8 @@ test("admin denies nonmembers and manages isolated invitations from creation thr
     await expect(visitor.getByRole("heading", { name: "Invitation not found" })).toBeVisible();
     await visitor.goto(newUrl);
     await expect(visitor.getByTestId("guest-name")).toHaveText(editedName);
-    await expect(visitor.getByRole("link", { name: "Get directions" })).toBeVisible();
+    await visitor.getByRole("link", { name: "Get Directions", exact: true }).scrollIntoViewIfNeeded();
+    await expect(visitor.getByRole("link", { name: "Get Directions", exact: true })).toBeVisible();
     await visitor.goto(automaticUrl);
     await expect(visitor.getByTestId("guest-name")).toHaveText(`Dr. ${automaticName}`);
     await visitor.close();
@@ -197,11 +193,14 @@ test("admin denies nonmembers and manages isolated invitations from creation thr
     const openEvent = page.waitForEvent("popup");
     await automaticRow.getByRole("link", { name: /^Open invitation/ }).click();
     const opened = await openEvent;
+    await opened.emulateMedia({ reducedMotion: "no-preference" });
     await expect(opened).toHaveURL(automaticUrl);
-    await expect(opened.locator(".phase-playing")).toBeVisible();
-    await opened.getByRole("button", { name: "Skip animation" }).click();
+    await expect(opened.locator("main.scene-welcome .welcome-scene")).toBeVisible();
+    await opened.getByRole("button", { name: "Skip Animation", exact: true }).click();
+    await expect(opened.locator("main.scene-invitation article.wedding-invitation")).toBeVisible();
     await expect(opened.getByTestId("guest-name")).toHaveText(`Dr. ${automaticName}`);
-    await expect(opened.getByRole("link", { name: "Get directions" })).toBeVisible();
+    await opened.getByRole("link", { name: "Get Directions", exact: true }).scrollIntoViewIfNeeded();
+    await expect(opened.getByRole("link", { name: "Get Directions", exact: true })).toBeVisible();
     await opened.close();
   });
 
@@ -210,15 +209,18 @@ test("admin denies nonmembers and manages isolated invitations from creation thr
       const previewEvent = page.waitForEvent("popup");
       await automaticRow.getByRole("link", { name: /^Preview invitation/ }).click();
       const preview = await previewEvent;
+      await preview.emulateMedia({ reducedMotion: "no-preference" });
       await expect(preview).toHaveURL(`${automaticUrl}?preview=1`);
-      await expect(preview.locator(".phase-open")).toBeVisible({ timeout: 3000 });
-      await expect(preview.locator(".envelope")).toHaveCount(0);
+      await expect(preview.locator("main.scene-invitation article.wedding-invitation")).toBeVisible({ timeout: 3000 });
+      await expect(preview.locator(".welcome-scene, .envelope-scene")).toHaveCount(0);
       await expect(preview.getByTestId("guest-name")).toHaveText(`Dr. ${automaticName}`);
       expect(await preview.evaluate(() => Object.keys(sessionStorage).filter((key) => key.startsWith("di:opened:")))).toEqual([]);
       await preview.goto(automaticUrl);
-      await expect(preview.locator(".phase-playing")).toBeVisible();
-      await preview.getByRole("button", { name: "Skip animation" }).click();
-      await expect(preview.getByRole("link", { name: "Get directions" })).toBeVisible();
+      await expect(preview.locator("main.scene-welcome .welcome-scene")).toBeVisible();
+      await preview.getByRole("button", { name: "Skip Animation", exact: true }).click();
+      await expect(preview.locator("main.scene-invitation article.wedding-invitation")).toBeVisible();
+      await preview.getByRole("link", { name: "Get Directions", exact: true }).scrollIntoViewIfNeeded();
+      await expect(preview.getByRole("link", { name: "Get Directions", exact: true })).toBeVisible();
       await preview.close();
     });
   } finally {
