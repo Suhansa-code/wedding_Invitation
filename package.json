@@ -1,39 +1,7 @@
 {
-  "name": "dulmi-isuru-invitation",
+  "name": "dulmi-isuru-in-full-bloom",
   "version": "1.0.0",
   "private": true,
-  "engines": {
-    "node": "22.x"
-  },
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "typecheck": "tsc --noEmit",
-    "lint": "eslint .",
-    "test": "vitest run",
-    "test:e2e": "playwright test"
-  },
-  "dependencies": {
-    "@supabase/ssr": "latest",
-    "@supabase/supabase-js": "latest",
-    "motion": "^14.6.0",
-    "next": "16.4.3",
-    "react": "19.3.1",
-    "react-dom": "19.3.1",
-    "server-only": "latest",
-    "zod": "latest"
-  },
-  "devDependencies": {
-    "@playwright/test": "latest",
-    "@tailwindcss/postcss": "latest",
-    "@types/node": "latest",
-    "@types/react": "latest",
-    "@types/react-dom": "latest",
-    "eslint": "^9.39.5",
-    "eslint-config-next": "16.4.3",
-    "tailwindcss": "latest",
-    "typescript": "~6.0.3",
-    "vitest": "^4.1.12"
-  }
+  "description": "A separate floral wedding invitation inspired by the supplied video.",
+  "scripts": { "dev": "node server.cjs", "start": "node server.cjs", "check": "node --check dist/app.js" }
 }

@@ -1,11 +1,5 @@
+.tools/
+reference/
 node_modules/
-.next/
-.next-e2e/
-.next-build/
-.env*
-!.env.example
-*.tsbuildinfo
-playwright-report/
-test-results/
-.vercel/
-.vercel
+*.log
+.openai/*.local.*

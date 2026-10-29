@@ -1,0 +1,30 @@
+/* Running poses preserve the supplied character designs. The final pose uses
+   the unmodified original couple.webp so the couple stay exactly as supplied. */
+.couple-run{position:relative;width:min(100%,400px);height:190px;margin:-18px auto 12px;overflow:hidden;mix-blend-mode:multiply;--sprite-height:190px;--approach:190px}
+.runner{position:absolute;bottom:0;width:calc(var(--sprite-height)*.75);height:var(--sprite-height);left:50%;pointer-events:none}
+.runner-bride{margin-left:calc(var(--sprite-height)*-.5)}
+.runner-groom{margin-left:calc(var(--sprite-height)*-.24)}
+.run-frame{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:0;overflow:hidden}
+.runner-bride .run-frame{clip-path:inset(0 0 4%)}
+.runner-groom .run-frame{clip-path:polygon(0 0,100% 0,100% 100%,6% 100%,6% 55%,0 55%)}
+.rest-pair{position:absolute;bottom:0;left:50%;height:calc(var(--sprite-height)*.96);width:auto;max-width:none;transform:translateX(-50%);mix-blend-mode:multiply;opacity:1;transition:opacity .15s}
+.is-running:not(.has-met) .rest-pair{opacity:0}
+.couple-run:not(.is-running) .runner,.has-met .runner{visibility:hidden}
+.meeting-heart{position:absolute;left:50%;top:1px;transform:translateX(-50%);color:var(--rose);font-size:16px;opacity:1;z-index:2}
+.couple-run.is-running .runner-bride{animation:bride-arrives 2.8s cubic-bezier(.25,.1,.25,1) both}
+.couple-run.is-running .runner-groom{animation:groom-arrives 2.8s cubic-bezier(.25,.1,.25,1) both}
+.is-running:not(.has-met) .frame-0{animation:run-pose-0 .64s step-end infinite}
+.is-running:not(.has-met) .frame-1{animation:run-pose-1 .64s step-end infinite}
+.is-running:not(.has-met) .frame-2{animation:run-pose-2 .64s step-end infinite}
+.is-running:not(.has-met) .frame-3{animation:run-pose-3 .64s step-end infinite}
+.is-running .meeting-heart{animation:hearts-meet 3.2s ease-out both}
+@keyframes bride-arrives{0%{transform:translateX(calc(-1*var(--approach)))}80%{transform:translateX(-9px)}100%{transform:translateX(0)}}
+@keyframes groom-arrives{0%{transform:translateX(var(--approach))}80%{transform:translateX(9px)}100%{transform:translateX(0)}}
+@keyframes run-pose-0{0%,100%{opacity:1}25%{opacity:0}}
+@keyframes run-pose-1{0%,50%,100%{opacity:0}25%{opacity:1}}
+@keyframes run-pose-2{0%,75%,100%{opacity:0}50%{opacity:1}}
+@keyframes run-pose-3{0%,100%{opacity:0}75%{opacity:1}}
+@keyframes hearts-meet{0%,80%{opacity:0;transform:translate(-50%,6px) scale(.5)}93%{opacity:1;transform:translate(-50%,-3px) scale(1.1)}100%{opacity:1;transform:translate(-50%,0) scale(1)}}
+@media(max-height:810px){.cover-content{padding-top:20px;padding-bottom:18px}.cover-prelude{margin-top:18px}.cover-rule{margin-block:16px}.cover-date{margin-bottom:14px}.couple-run{height:158px;--sprite-height:158px;--approach:165px;margin-top:-16px;margin-bottom:12px}.cover-hint{margin-top:16px}}
+@media(max-height:690px){.cover-content>.eyebrow{font-size:6px}.cover-prelude{margin-top:10px}.cover-guest{margin-bottom:12px}.cover-rule{margin-block:10px}.cover h1{font-size:52px}.cover-date{margin-bottom:12px}.couple-run{height:138px;--sprite-height:138px;--approach:150px;margin-top:-16px;margin-bottom:10px}.cover-seal{width:58px;height:58px}.cover-hint{margin-top:15px}}
+@media(prefers-reduced-motion:reduce){.couple-run *{animation:none!important}.runner{visibility:hidden!important}.rest-pair{opacity:1!important;transition:none}.meeting-heart{opacity:1}}
