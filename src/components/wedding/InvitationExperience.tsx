@@ -9,12 +9,14 @@ import EnvelopeScene from "./EnvelopeScene";
 import WeddingInvitation from "./WeddingInvitation";
 import WeddingActions from "./WeddingActions";
 import "./experience.css";
+import { weddingEase } from "@/components/animation/motionVariants";
+import WeddingAtmosphere from "./WeddingAtmosphere";
 
 type Scene = "welcome" | "envelope" | "invitation";
 const subscribe = () => () => {};
 
-export default function InvitationExperience({ guestName, sessionKey = "preview", preview = false }: { guestName: string; sessionKey?: string; preview?: boolean }) {
-  const [scene, setScene] = useState<Scene>("welcome");
+export default function InvitationExperience({ guestName, sessionKey = "preview", preview = false, startWithEnvelope = false }: { guestName: string; sessionKey?: string; preview?: boolean; startWithEnvelope?: boolean }) {
+  const [scene, setScene] = useState<Scene>(startWithEnvelope ? "envelope" : "welcome");
   const [interacted, setInteracted] = useState(false);
   const [envelopeComplete, setEnvelopeComplete] = useState(false);
   const reducedMotion = useWeddingReducedMotion();
@@ -50,14 +52,16 @@ export default function InvitationExperience({ guestName, sessionKey = "preview"
   return (
     <MotionConfig reducedMotion="user">
       <main className={`invitation-experience scene-${activeScene}`}>
+        <WeddingAtmosphere />
+        <div className="experience-ambience" aria-hidden="true"><span /><span /></div>
         <div ref={contentRef} className="experience-content" tabIndex={-1}>
-          <AnimatePresence mode="wait" initial={false} onExitComplete={focusScene}>
+          <AnimatePresence mode="wait" onExitComplete={focusScene}>
             {activeScene === "welcome" ? (
               <WelcomeScene key="welcome" guestName={guestName} onOpen={() => { setInteracted(true); setScene(reducedMotion ? "invitation" : "envelope"); }} />
             ) : !isInvitation ? (
               <EnvelopeScene key="envelope" guestName={guestName} onComplete={() => { setEnvelopeComplete(true); showInvitation(); }} />
             ) : (
-              <motion.div key="invitation" className="invitation-final" initial={reducedMotion || envelopeComplete ? false : { opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: reducedMotion ? 0 : 0.2 }} onAnimationComplete={focusScene}>
+              <motion.div key="invitation" className="invitation-final" initial={reducedMotion || envelopeComplete ? false : { opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: reducedMotion ? 0 : 16 }} transition={{ duration: reducedMotion ? 0 : 0.55, ease: weddingEase }} onAnimationComplete={focusScene}>
                 <WeddingInvitation guestName={guestName} still={envelopeComplete} />
                 <WeddingActions onReplay={() => { setEnvelopeComplete(false); setInteracted(true); setScene("envelope"); }} />
                 <motion.footer className="experience-footer" initial={reducedMotion ? false : { opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ duration: 0.8 }}>
@@ -67,7 +71,9 @@ export default function InvitationExperience({ guestName, sessionKey = "preview"
             )}
           </AnimatePresence>
         </div>
-        {!isInvitation && <button className="experience-skip" onClick={showInvitation} type="button">Skip Animation <span aria-hidden="true">→</span></button>}
+        <AnimatePresence>
+          {!isInvitation && <motion.button key="skip" className="experience-skip" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: reducedMotion ? 0 : 0.2 }} onClick={showInvitation} type="button">Skip Animation <span aria-hidden="true">→</span></motion.button>}
+        </AnimatePresence>
         <p className="sr-only" role="status">{isInvitation ? `Your invitation is open, ${guestName}.` : activeScene === "welcome" ? "Your personalized wedding invitation is ready." : "Opening your envelope."}</p>
         <noscript><p className="notice">JavaScript is needed for the animated experience. <a href="/images/wedding-invitation.png">View the original invitation artwork</a>.</p></noscript>
       </main>

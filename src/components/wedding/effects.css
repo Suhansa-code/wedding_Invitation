@@ -1,0 +1,104 @@
+/* Short, quiet flourishes; ambient movement settles after the entrance. */
+.landing { isolation: isolate; }
+.wedding-atmosphere { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: -1; }
+.wedding-wash { position: absolute; width: min(70vw, 760px); aspect-ratio: 1; border-radius: 50%; opacity: .7; }
+.wedding-wash-left { top: -25%; left: -25%; background: radial-gradient(circle, #ddc79c24, transparent 70%); }
+.wedding-wash-right { top: 25%; right: -30%; background: radial-gradient(circle, #e7cbc62b, transparent 70%); }
+.wedding-petals span { position: absolute; left: var(--petal-left); top: var(--petal-top); width: var(--petal-size); height: calc(var(--petal-size) * 1.65); border-radius: 80% 15% 75% 20%; background: linear-gradient(135deg, #ddb1a5, #e9cabb80); animation: wedding-petal-drift 4.8s ease-out var(--petal-delay) both; }
+.wedding-petals span:nth-child(3n) { background: linear-gradient(145deg, #d8b78a, #f0d9ba90); border-radius: 15% 80% 20% 75%; }
+.wedding-petals span:nth-child(even) { animation-name: wedding-petal-sway; }
+.wedding-motes span { position: absolute; width: 3px; height: 3px; border-radius: 50%; background: #b99a5e; opacity: .18; animation: wedding-mote-arrive 3.8s ease-out both; }
+.wedding-motes span:nth-child(1) { left: 10%; top: 38%; }
+.wedding-motes span:nth-child(2) { left: 31%; top: 15%; animation-delay: -.5s; }
+.wedding-motes span:nth-child(3) { left: 48%; top: 84%; animation-delay: -1s; }
+.wedding-motes span:nth-child(4) { left: 75%; top: 13%; animation-delay: -1.5s; }
+.wedding-motes span:nth-child(5) { left: 90%; top: 57%; animation-delay: -.8s; }
+.wedding-motes span:nth-child(6) { left: 16%; top: 82%; animation-delay: -1.2s; }
+.wedding-motes span:nth-child(7) { left: 39%; top: 45%; }
+.wedding-motes span:nth-child(8) { left: 86%; top: 23%; animation-delay: -.6s; }
+.wedding-motes span:nth-child(9) { left: 58%; top: 7%; animation-delay: -1.4s; }
+.wedding-motes span:nth-child(10) { left: 66%; top: 75%; animation-delay: -.3s; }
+.landing-envelope-paper { animation: wedding-envelope-float 4.4s ease-in-out 1.5s both; }
+.landing-envelope-paper:has(.wax-seal-link:hover), .landing-envelope-paper:has(.wax-seal-link:focus-visible) { animation-play-state: paused; }
+.wax-seal-link::before { content: ""; position: absolute; inset: -7px; border: 1px solid #b99a5e70; border-radius: 50%; pointer-events: none; animation: wedding-seal-halo 1.5s ease-out 3; }
+.wax-seal-link::after { content: ""; position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(115deg, transparent 25%, #fff4cf80 49%, transparent 73%); background-size: 260% 100%; background-position: 100% 0; opacity: 0; pointer-events: none; transition: background-position .7s ease, opacity .35s; }
+.wax-seal-link:hover::after, .wax-seal-link:focus-visible::after { background-position: 0 0; opacity: .65; }
+.landing[aria-busy="true"] .wax-seal-link { transform: translate(-50%, -50%) rotate(-12deg) scale(1.18); opacity: 0; transition: transform .4s, opacity .4s; }
+.landing[aria-busy="true"] .landing-envelope-paper { animation-play-state: paused; }
+.landing-transition[data-active="true"] .monogram { animation: wedding-monogram-arrive .55s ease-out both; }
+.landing-transition[data-active="true"] .landing-transition-line { animation: wedding-line-unfold .55s ease-out both; }
+.gold-ornament { animation: wedding-line-unfold 1.2s ease-out .25s both; }
+.welcome-mandala { animation: wedding-mandala-arrive 1.4s cubic-bezier(.22, 1, .36, 1) both; }
+.welcome-guest span { color: #79592d; }
+.envelope-scene { isolation: isolate; }
+.envelope-light { position: absolute; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(ellipse at 50% 42%, #e5c88b40, transparent 55%); opacity: 0; transform: scale(.85); transition: opacity .9s, transform 1.6s; }
+.envelope-scene[data-stage="opening"] .envelope-light { opacity: 1; transform: scale(1.12); }
+.envelope-scene[data-stage="expanding"] .envelope-light { opacity: 0; transform: scale(1.3); }
+.opening-back::after { content: ""; position: absolute; inset: 0; border: 1px solid #fff7e280; border-radius: inherit; pointer-events: none; }
+.invitation-final .wedding-invitation::after { content: ""; position: absolute; inset: 0; pointer-events: none; border: 1px solid #bda16d2b; background: linear-gradient(115deg, transparent 35%, #f4dcaa16 50%, transparent 65%); background-size: 300% 100%; animation: wedding-paper-light 1.5s ease-out both; }
+.invitation-final .wedding-action { transition: background-color .2s, border-color .2s, transform .25s, box-shadow .25s; }
+.wedding-action:hover { transform: translateY(-2px); box-shadow: 0 5px 16px #77532512; }
+.wedding-action:active { transform: translateY(0); }
+.wedding-action svg { transition: transform .3s; }
+.wedding-action-primary:hover svg { transform: translate(2px, -2px); }
+.wedding-action-replay:hover svg { transform: rotate(-8deg); }
+.wedding-actions-intro { flex-basis: 100%; text-align: center; margin: 6px 0 12px; }
+.wedding-actions-intro h2 { font: 30px var(--font-serif); color: #62461f; margin-bottom: 10px; }
+.wedding-actions-intro > p:last-child { font-size: 16px; color: #75694f; margin: 0; }
+.wedding-actions { scroll-margin-top: 24px; padding-bottom: 12px; }
+.open-invitation:focus-visible, .experience-skip:focus-visible { outline: 2px solid #806323; outline-offset: 5px; }
+.experience-footer { padding-bottom: 12px; }
+.admin-main { animation: studio-arrive .35s ease-out both; }
+.admin-header { background: #fffdf8; box-shadow: 0 4px 22px #68532905; }
+.admin-nav a[aria-current="page"] { border-color: #bca775; background: #ede7d9; color: #5d4b29; }
+.admin-main .panel { border-radius: 10px; box-shadow: 0 4px 22px #68532907; }
+.admin-main .input { transition: border-color .2s, box-shadow .2s, background .2s; }
+.admin-main .input:hover { border-color: #afa07d; }
+.admin-main .input:focus-visible { border-color: #a18a53; outline: 2px solid #a18a5340; outline-offset: 2px; background: #fff; }
+.admin-main .button { transition: background .2s, border-color .2s, box-shadow .2s; }
+.admin-main .button-primary:hover { box-shadow: 0 4px 14px #50564124; }
+.guest-table tbody tr { transition: background .2s; }
+.guest-table tbody tr:hover, .guest-table tbody tr:focus-within { background: #f2eddf80; }
+.status[data-is-active="false"] { background: #eeebe7; color: #72675c; }
+.status[data-is-active="true"] { color: #455339; }
+.status::before { content: ""; display: inline-block; width: 5px; height: 5px; margin-right: 5px; border-radius: 50%; background: currentColor; vertical-align: middle; }
+.admin-main .notice, .admin-main .error-message, .admin-main details[open] > div { animation: studio-arrive .25s ease-out both; }
+.admin-main .button[aria-busy="true"]::before { content: ""; width: 13px; height: 13px; flex-shrink: 0; border: 1px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: studio-spin .8s linear infinite; }
+.button[data-copied="true"] { border-color: #a8b18f; background: #edf0e5; color: #455339; }
+.copy-feedback { min-height: 1.5em; }
+.password-toggle { align-self: flex-end; min-height: 36px; border: 0; padding: 6px 0 6px 12px; background: transparent; color: #796437; font-size: 12px; text-decoration: underline; text-underline-offset: 3px; }
+.studio-loading { display: flex; align-items: center; justify-content: center; gap: 14px; min-height: 40svh; }
+.studio-loading p { margin: 0; }
+.loading-ornament { width: 24px; height: 24px; border: 1px solid #d8cbb0; border-top-color: #987b40; border-radius: 50%; animation: studio-spin 1s linear infinite; }
+.message-page { animation: studio-arrive .5s ease-out both; }
+.message-page .button { margin: 5px; }
+@keyframes studio-arrive { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes studio-spin { to { transform: rotate(360deg); } }
+@media (max-width: 760px) {
+  .wedding-petals span:nth-child(n+19) { display: none; }
+  .landing-main { padding-top: 24px; }
+  .admin-main .button-small, .password-toggle { min-height: 44px; }
+  .admin-nav { width: 100%; }
+  .admin-nav > a { flex: 1; }
+  .guest-table details > div { min-width: 0; }
+  .invitation-final .wedding-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .wedding-actions-intro, .invitation-final .wedding-action-replay { grid-column: 1 / -1; }
+  .invitation-final .wedding-action { padding-inline: 10px; font-size: 15px; }
+}
+@keyframes wedding-petal-drift { 0% { opacity: 0; transform: translate3d(-15px, -35px, 0) rotate(-25deg); } 18% { opacity: .4; } 75% { opacity: .25; } 100% { opacity: 0; transform: translate3d(40px, 155px, 0) rotate(65deg); } }
+@keyframes wedding-petal-sway { 0% { opacity: 0; transform: translate3d(20px, -30px, 0) rotate(30deg); } 18% { opacity: .45; } 75% { opacity: .28; } 100% { opacity: 0; transform: translate3d(-35px, 175px, 0) rotate(-75deg); } }
+@keyframes wedding-mote-arrive { from { opacity: 0; transform: translateY(12px); } to { opacity: .18; transform: translateY(0); } }
+@keyframes wedding-envelope-float { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-9px) rotate(.6deg); } }
+@keyframes wedding-seal-halo { from { opacity: .5; transform: scale(.9); } to { opacity: 0; transform: scale(1.5); } }
+@keyframes wedding-monogram-arrive { from { opacity: 0; transform: translateY(8px) scale(.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes wedding-line-unfold { from { opacity: 0; transform: scaleX(.25); } to { opacity: 1; transform: scaleX(1); } }
+@keyframes wedding-mandala-arrive { from { opacity: 0; transform: translateY(-18px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes wedding-paper-light { from { background-position: 100% 0; } to { background-position: 0 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .wedding-petals, .wedding-motes, .wax-seal-link::before, .wax-seal-link::after { display: none; }
+  .landing-envelope-paper, .gold-ornament, .welcome-mandala, .landing-transition *, .invitation-final .wedding-invitation::after { animation: none; }
+  .envelope-light { transition: none; }
+  .wedding-action:hover, .wedding-action svg, .wax-seal-link:hover { transform: none; }
+  .wax-seal-link:hover { transform: translate(-50%, -50%); }
+  .admin-main, .message-page, .admin-main .notice, .admin-main .error-message, .admin-main details[open] > div, .loading-ornament, .admin-main .button[aria-busy="true"]::before { animation: none; }
+}

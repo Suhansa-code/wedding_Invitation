@@ -35,7 +35,7 @@ export function GuestForm({ guest }: { guest?: Invitation }) {
   );
   const suggestedName = [title, name.trim()].filter(Boolean).join(" ");
   return (
-    <form action={action} className="space-y-5">
+    <form action={action} className="space-y-5" aria-busy={pending}>
       {guest && <input type="hidden" name="id" value={guest.id} />}
       <fieldset disabled={pending} className="space-y-5">
         <legend className="sr-only">
@@ -153,7 +153,7 @@ export function GuestForm({ guest }: { guest?: Invitation }) {
           </p>
         )}
         <div className="form-actions">
-          <button className="button button-primary" type="submit">
+          <button className="button button-primary" type="submit" aria-busy={pending}>
             {pending
               ? "Saving..."
               : guest

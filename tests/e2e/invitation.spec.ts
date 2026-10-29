@@ -33,17 +33,57 @@ async function expectNoHorizontalOverflow(page: Page) {
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 }
 
-test("home page is mobile-safe and opens the generic welcome experience", async ({ page }) => {
+test("home seal opens the envelope directly and remains usable after back navigation", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto("/");
   await expect(page.getByRole("heading", { name: "Dulmi & Isuru" })).toBeVisible();
   await expectNoHorizontalOverflow(page);
-  await page.getByRole("link", { name: "Open the invitation", exact: true }).click();
-  await expect(page).toHaveURL(/\/preview$/);
-  await expectWelcome(page, "family & friends");
+  await page.getByRole("link", { name: "Open envelope", exact: true }).scrollIntoViewIfNeeded();
+  await expect(page.locator(".landing-envelope-arrival")).toHaveCSS("opacity", "1");
+  await page.screenshot({ path: test.info().outputPath("landing-seal-action.png"), fullPage: true });
+  await page.getByRole("link", { name: "Open envelope", exact: true }).focus();
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL(/\/preview\?open=1$/);
+  await expect(page.locator("main.scene-envelope .envelope-scene")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Open My Invitation", exact: true })).toHaveCount(0);
   await page.getByRole("button", { name: "Skip Animation", exact: true }).click();
   await expectOpen(page);
   await expect(page.getByTestId("guest-name")).toHaveText("family & friends");
+  const calendar = page.getByRole("link", { name: "Add to calendar", exact: true });
+  await expect(calendar).toHaveAttribute("download", "Dulmi-and-Isuru-Wedding.ics");
+  const calendarResponse = await page.request.get("/dulmi-isuru-wedding.ics");
+  expect(calendarResponse.ok()).toBe(true);
+  const event = await calendarResponse.text();
+  expect(event).toContain("DTSTART:20261123T043000Z");
+  expect(event).toContain("DTEND:20261123T103000Z");
+  // Returning through the router cache must restore the landing page after its exit animation.
+  await page.goBack();
+  await expect(page.getByRole("heading", { name: "Dulmi & Isuru" })).toBeVisible();
+  await expect(page.locator(".landing")).toHaveCSS("opacity", "1");
+  await page.getByRole("link", { name: "Open envelope", exact: true }).click();
+  await expect(page).toHaveURL(/\/preview\?open=1$/);
+  await expectOpen(page);
+});
+
+test("landing navigation stays usable with reduced motion and without JavaScript", async ({ browser, baseURL }) => {
+  for (const javaScriptEnabled of [true, false]) {
+    const context = await browser.newContext({ baseURL, javaScriptEnabled, reducedMotion: "reduce" });
+    try {
+      const page = await context.newPage();
+      await page.goto("/");
+      await expect(page.getByRole("heading", { name: "Dulmi & Isuru" })).toBeVisible();
+      await expect(page.locator(".landing")).toHaveCSS("opacity", "1");
+      await page.getByRole("link", { name: "Open envelope", exact: true }).click();
+      await expect(page).toHaveURL(/\/preview\?open=1$/);
+      if (javaScriptEnabled) {
+        await expectOpen(page);
+      } else {
+        await expect(page.getByRole("link", { name: "View the original invitation artwork" })).toBeVisible();
+      }
+    } finally {
+      await context.close();
+    }
+  }
 });
 
 test("first visit welcomes the guest, opens the layered envelope, and remembers only this token", async ({ page }) => {
@@ -81,6 +121,9 @@ test("first visit welcomes the guest, opens the layered envelope, and remembers 
       transformStyle: getComputedStyle(flap).transformStyle,
       originY: parseFloat(getComputedStyle(flap).transformOrigin.split(" ")[1]),
       faces: Array.from(flap.children, (face) => getComputedStyle(face).backfaceVisibility),
+      envelopeSize: { width: back.offsetWidth, height: back.offsetHeight },
+      letterSize: { width: letter.offsetWidth, height: letter.offsetHeight },
+      letterBottom: letter.offsetTop + letter.offsetHeight,
     };
   });
   expect(layers.separate).toBe(4);
@@ -91,6 +134,11 @@ test("first visit welcomes the guest, opens the layered envelope, and remembers 
   expect(layers.transformStyle).toBe("preserve-3d");
   expect(layers.originY).toBe(0);
   expect(layers.faces).toEqual(["hidden", "hidden"]);
+  // The complete portrait card must fit inside the closed envelope in both dimensions.
+  expect(layers.letterSize.width).toBeLessThan(layers.envelopeSize.width);
+  expect(layers.letterSize.height).toBeLessThan(layers.envelopeSize.height);
+  expect(layers.letterBottom).toBeLessThanOrEqual(layers.envelopeSize.height);
+  await page.screenshot({ path: test.info().outputPath("envelope-fit.png"), fullPage: true });
 
   // useAnimate awaits each stage; wait for the real hinge/letter sequence, not a synthetic timeline seek.
   await expect(page.locator("[data-envelope-flap]")).toHaveCSS("z-index", "1");

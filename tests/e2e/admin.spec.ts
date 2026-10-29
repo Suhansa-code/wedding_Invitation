@@ -29,6 +29,10 @@ test("admin denies nonmembers and manages isolated invitations from creation thr
   const customToken = `private-${unique}`;
   await test.step("reject invalid credentials and authenticated users outside the allowlist", async () => {
     await page.goto("/admin/login");
+    await page.getByRole("button", { name: "Show password", exact: true }).click();
+    await expect(page.getByLabel("Password", { exact: true })).toHaveAttribute("type", "text");
+    await page.getByRole("button", { name: "Hide password", exact: true }).click();
+    await expect(page.getByLabel("Password", { exact: true })).toHaveAttribute("type", "password");
     await signIn(page, "admin@example.test", "wrong-password");
     await expect(page.locator("form").getByRole("alert")).toContainText("Unable to sign in with administrator access");
     await expect(page.getByRole("button", { name: "Sign in to the studio" })).toBeEnabled();
@@ -43,6 +47,7 @@ test("admin denies nonmembers and manages isolated invitations from creation thr
   await test.step("allowlisted login sets a real SSR session and loads dashboard counts", async () => {
     await signIn(page, "admin@example.test");
     await expect(page).toHaveURL(/\/admin$/);
+    await expect(page.getByRole("link", { name: "Overview", exact: true })).toHaveAttribute("aria-current", "page");
     await expect(page.getByRole("heading", { name: "Every invitation, personal." })).toBeVisible();
     const totals = page.getByRole("region", { name: "Invitation totals" });
     await expect(totals).toBeVisible();

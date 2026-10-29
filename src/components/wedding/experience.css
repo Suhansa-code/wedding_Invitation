@@ -3,11 +3,19 @@
   --experience-paper: #fbfaf6;
   --invitation-width: min(680px, calc(100vw - 48px));
   min-height: 100svh;
+  position: relative;
+  isolation: isolate;
   background: var(--experience-paper);
   color: #171612;
   overflow-x: clip;
   font-family: "Times New Roman", Times, serif;
 }
+.experience-ambience { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: -1; }
+.experience-ambience span { position: absolute; width: min(90vw, 850px); aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle, #d9bb7920, transparent 68%); transition: opacity 1s, transform 1.5s cubic-bezier(.22, 1, .36, 1); }
+.experience-ambience span:first-child { top: -200px; left: -30%; }
+.experience-ambience span:last-child { top: 30svh; right: -35%; }
+.scene-envelope .experience-ambience span { transform: scale(1.3); }
+.scene-invitation .experience-ambience span { opacity: 0.3; }
 .experience-content { position: relative; min-height: 100svh; outline: none; }
 .experience-content:focus { outline: none; }
 .welcome-scene {
@@ -29,33 +37,39 @@
 .welcome-ampersand { color: var(--experience-gold); font-size: .7em; padding-inline: .08em; }
 .welcome-divider { display: flex; align-items: center; justify-content: center; gap: 12px; color: var(--experience-gold); margin: 12px auto 22px; }
 .welcome-divider span { width: 48px; height: 1px; background: #b99864; }
+.welcome-divider span:first-child { transform-origin: right; }
+.welcome-divider span:last-child { transform-origin: left; }
 .welcome-date { font-size: 16px; text-transform: uppercase; letter-spacing: .15em; margin-bottom: 30px; }
 .welcome-guest { font-size: clamp(20px, 4vw, 25px); line-height: 1.5; margin: 0 auto 26px; max-width: 540px; overflow-wrap: anywhere; text-wrap: balance; }
 .open-invitation { display: inline-flex; gap: 24px; align-items: center; justify-content: center; min-height: 52px; padding: 15px 27px; border: 1px solid #a68149; border-radius: 2px; background: #fffdf8; color: #68471e; font: 16px "Times New Roman", serif; }
 .open-invitation:hover { background: #f5efdf; }
+.open-invitation { transition: background .25s, box-shadow .3s; }
+.open-invitation:hover { box-shadow: 0 7px 24px #a681491c; }
+.open-invitation svg { transition: transform .3s; }
+.open-invitation:hover svg { transform: translateX(4px); }
 .welcome-footnote { margin: 25px 0 0; font-size: 15px; font-style: italic; color: #71664f; }
 .experience-skip { position: fixed; bottom: max(20px, env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); z-index: 20; min-height: 44px; padding: 12px 20px; border: 1px solid #e8dfcc; border-radius: 30px; background: #fbfaf6f5; color: #6c593a; white-space: nowrap; font: 13px Arial, sans-serif; }
 .experience-skip span { margin-left: 10px; }
 .invitation-final { width: min(100%, 728px); margin-inline: auto; padding: 24px 24px max(30px, env(safe-area-inset-bottom)); }
 .experience-footer { margin: 28px 0 0; text-align: center; color: #6f624c; font-size: 17px; line-height: 1.8; }
 .experience-footer span { font-style: italic; }
-.envelope-scene { position: relative; min-height: 100svh; display: grid; place-items: center; padding: 80px 28px 100px; text-align: center; outline: none; }
+.envelope-scene { position: relative; height: 100svh; min-height: 360px; overflow: clip; display: grid; place-items: center; padding: 110px 28px 120px; text-align: center; outline: none; }
 .envelope-dedication { position: absolute; top: 9svh; padding-inline: 24px; font-size: 16px; color: #786746; }
 .envelope-recipient { position: absolute; bottom: 75px; width: calc(100% - 48px); max-width: 540px; margin: 0; color: #6d5d41; font-size: 16px; overflow-wrap: anywhere; }
 .envelope-recipient span { display: block; color: #242019; margin-top: 8px; font-size: 22px; }
-.opening-envelope { width: min(100%, 440px, 38svh); aspect-ratio: 1.55; margin-top: 30svh; position: relative; isolation: isolate; perspective: 1400px; opacity: 0; }
+.opening-envelope { --envelope-ratio: 0.7; width: min(100%, 560px, calc(max(140px, 100svh - 300px) * var(--envelope-ratio))); aspect-ratio: var(--envelope-ratio); position: relative; isolation: isolate; perspective: 1400px; opacity: 0; }
 .opening-back { position: absolute; inset: 0; z-index: 0; background: #e6dbc3; border: 1px solid #d6c7a7; border-radius: 3px; box-shadow: 0 22px 45px #5d4b2320; }
 .opening-card-window { position: absolute; inset: 0; z-index: 2; clip-path: inset(-400% -200% 0); pointer-events: none; }
-.opening-letter { position: absolute; top: 6%; left: 50%; translate: -50% 0; width: 82%; aspect-ratio: 1056 / 1490; z-index: 2; background: white; box-shadow: 0 2px 12px #55421b25; transform-origin: center top; }
+.opening-letter { position: absolute; top: 6%; left: 50%; translate: -50% 0; width: 88%; min-width: 0; min-height: 0; z-index: 2; background: white; box-shadow: 0 2px 12px #55421b25; transform-origin: center top; }
 .opening-letter-artwork { width: var(--invitation-width); transform-origin: left top; }
-.opening-pocket { position: absolute; inset: 0; z-index: 4; clip-path: polygon(0 0, 50% 49%, 100% 0, 100% 100%, 0 100%); background: linear-gradient(33deg, #f4eddf 49.7%, #d9cbb0 49.9%, transparent 50.2%) left / 50.2% 100% no-repeat, linear-gradient(-33deg, #faf6eb 49.7%, #d9cbb0 49.9%, transparent 50.2%) right / 50.2% 100% no-repeat; border-radius: 3px; }
+.opening-pocket { position: absolute; inset: 0; z-index: 4; clip-path: polygon(0 0, 50% 32%, 100% 0, 100% 100%, 0 100%); background: linear-gradient(145deg, #f4eddf, #faf6eb 55%, #eee5d3); border: 1px solid #d6c8ad; border-radius: 3px; }
 .opening-pocket::after { content: ""; position: absolute; inset: 0; clip-path: polygon(0 100%, 50% 44%, 100% 100%); background: linear-gradient(#faf6ed, #f0e8d8); border-bottom: 1px solid #d6c8ad; }
 .opening-pocket::before { content: ""; position: absolute; inset: 12px; z-index: 1; border: 1px solid #b5985e33; }
-.opening-flap { position: absolute; inset: 0 0 auto; height: 59%; z-index: 6; transform-origin: center top; transform-style: preserve-3d; }
+.opening-flap { position: absolute; inset: 0 0 auto; height: 35%; z-index: 6; transform-origin: center top; transform-style: preserve-3d; }
 .opening-flap-face { position: absolute; inset: 0; clip-path: polygon(0 0, 100% 0, 50% 100%); backface-visibility: hidden; -webkit-backface-visibility: hidden; }
 .opening-flap-outside { background: linear-gradient(#fffaf0, #ede3cd); }
 .opening-flap-inside { transform: rotateX(180deg); background: linear-gradient(#e5d6b9, #f2e9d6); }
-.opening-seal-position { position: absolute; top: 55%; left: 50%; translate: -50% -50%; z-index: 7; width: 16%; aspect-ratio: 1; }
+.opening-seal-position { position: absolute; top: 34%; left: 50%; translate: -50% -50%; z-index: 7; width: 16%; aspect-ratio: 1; }
 .opening-seal { display: flex; align-items: center; justify-content: center; gap: 2px; width: 100%; height: 100%; border-radius: 47% 49% 45% 48%; background: radial-gradient(circle at 30% 20%, #d8bf79, #b3954e 70%, #a3823f); box-shadow: 1px 4px 7px #5f451c33, inset 0 0 0 3px #d4b972, inset 0 0 0 5px #ae8d49; color: #5d461d; font-size: clamp(16px, 4vw, 27px); text-shadow: 0 1px #e4cf9d; }
 .opening-seal span { font-size: .6em; font-style: italic; }
 @media (max-width: 479px) {
@@ -67,6 +81,7 @@
   .envelope-dedication { font-size: 14px; }
 }
 @media (prefers-reduced-motion: reduce) {
+  .experience-ambience span { transition: none; }
   .welcome-scene *, .envelope-scene * { animation: none !important; transition: none !important; }
 }
 @media (max-height: 700px) and (min-width: 600px) {

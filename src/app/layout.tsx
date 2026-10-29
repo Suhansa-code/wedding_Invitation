@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { siteUrl } from "@/lib/site";
 import localFont from "next/font/local";
 import "./globals.css";
+import "@/components/wedding/effects.css";
 
 const scriptFont = localFont({ src: "../../public/images/great-vibes-latin.woff2", variable: "--font-script", display: "swap" });
 

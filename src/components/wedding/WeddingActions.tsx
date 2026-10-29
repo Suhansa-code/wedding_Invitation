@@ -15,12 +15,18 @@ export default function WeddingActions({ onReplay }: { onReplay: () => void }) {
   return (
     <motion.nav
       className="wedding-actions"
+      id="invitation-actions"
       aria-label="Invitation actions"
       initial={reducedMotion ? false : "hidden"}
       whileInView="visible"
       viewport={{ once: true, amount: 0.2 }}
       variants={reducedMotion ? weddingReducedRevealVariants : weddingRevealVariants}
     >
+      <div className="wedding-actions-intro"><p className="eyebrow">Join the celebration</p><h2>Everything for the day</h2><p>Save the date, find the venue, or call us.</p></div>
+      <a className="wedding-action" href="/dulmi-isuru-wedding.ics" download="Dulmi-and-Isuru-Wedding.ics">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M7 3v4m10-4v4M3 11h18m-14 4h3m4 0h3" /></svg>
+        Add to calendar
+      </a>
       <a className="wedding-action wedding-action-primary" href={weddingConfig.directions} target="_blank" rel="noopener noreferrer">
         Get Directions
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">

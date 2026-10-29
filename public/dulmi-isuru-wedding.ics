@@ -1,0 +1,18 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Dulmi and Isuru//Wedding Invitation//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:dulmi-isuru-20261123@wedding-invitation
+DTSTAMP:20261028T000000Z
+DTSTART:20261123T043000Z
+DTEND:20261123T103000Z
+SUMMARY:Dulmi & Isuru's Wedding
+LOCATION:The Stallions Banquet Hall\, No: B/2 Nayagoda Road\, Gonapola
+DESCRIPTION:Join us to celebrate.\n10 AM to 4 PM Sri Lanka time.\n
+ Directions: https://maps.app.goo.gl/QGAZavf3ThqrCqGQ8
+STATUS:CONFIRMED
+TRANSP:OPAQUE
+END:VEVENT
+END:VCALENDAR

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { requireAdmin } from "@/lib/auth";
-import { SignOutButton } from "@/components/admin/sign-out-button";
+import StudioNav from "@/components/admin/studio-nav";
 
 export default async function ProtectedLayout({
   children,
@@ -21,18 +21,7 @@ export default async function ProtectedLayout({
           <span className="eyebrow">Dulmi &amp; Isuru</span>
           <span className="mt-1 block text-xl">Invitation Studio</span>
         </Link>
-        <nav
-          className="admin-nav flex flex-wrap items-center gap-3"
-          aria-label="Administration"
-        >
-          <Link href="/admin" className="button button-quiet">
-            Overview
-          </Link>
-          <Link href="/admin/guests" className="button button-quiet">
-            Guest list
-          </Link>
-          <SignOutButton />
-        </nav>
+        <StudioNav />
       </header>
       <main id="admin-content" className="admin-main">
         {children}

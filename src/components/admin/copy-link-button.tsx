@@ -25,10 +25,12 @@ export function CopyLinkButton({ url }: { url: string }) {
         type="button"
         disabled={pending}
         onClick={copy}
+        aria-label="Copy link"
+        data-copied={message === "Link copied."}
       >
-        {pending ? "Copying..." : "Copy link"}
+        {pending ? "Copying..." : message === "Link copied." ? "Copied ✓" : "Copy link"}
       </button>
-      <p role="status" className="muted mt-1 max-w-56 text-xs">
+      <p role="status" className="copy-feedback muted mt-1 max-w-56 text-xs">
         {message}
       </p>
     </div>
